@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delhi Transport Corporation - Leave Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <img src="assets/logo.png" alt="DTC Logo" class="logo-img">
+                <h1>Delhi Transport Corporation</h1>
+                <p>Leave & Substitution Management System</p>
+            </div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <span id="userName"></span>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <!-- Authentication Section -->
+        <section id="authSection" class="auth-section">
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="tab-btn active" onclick="showTab('signin')">Sign In</button>
+                    <button class="tab-btn" onclick="showTab('signup')">Sign Up</button>
+                </div>
+
+                <!-- Sign In Form -->
+                <div id="signin" class="auth-form active">
+                    <h2>Sign In</h2>
+                    <form onsubmit="signIn(event)">
+                        <div class="form-group">
+                            <label for="loginId">Email / Unique ID</label>
+                            <input type="text" id="loginId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                    </form>
+                    <button onclick="showAdminLogin()" class="btn btn-secondary">Admin Login</button>
+                </div>
+
+                <!-- Sign Up Form -->
+                <div id="signup" class="auth-form">
+                    <h2>Sign Up</h2>
+                    <form onsubmit="signUp(event)">
+                        <div class="form-group">
+                            <label for="signupName">Name</label>
+                            <input type="text" id="signupName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupId">Unique ID</label>
+                            <input type="text" id="signupId" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupService">Time of Service</label>
+                            <input type="date" id="signupService" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupPassword">Password</label>
+                            <input type="password" id="signupPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupPassword2">Re-enter Password</label>
+                            <input type="password" id="signupPassword2" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- User Dashboard -->
+        <section id="userDashboard" class="dashboard" style="display: none;">
+            <div class="dashboard-header">
+                <h2>User Dashboard</h2>
+                <div class="notification-icon" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span id="notificationCount" class="notification-count">0</span>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Leave Application -->
+                <div class="card">
+                    <h3>Apply for Leave</h3>
+                    <form onsubmit="applyLeave(event)">
+                        <div class="form-group">
+                            <label for="leaveStart">Start Date</label>
+                            <input type="date" id="leaveStart" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="leaveEnd">End Date</label>
+                            <input type="date" id="leaveEnd" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="leaveReason">Reason</label>
+                            <textarea id="leaveReason" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Apply for Leave</button>
+                    </form>
+                </div>
+
+                <!-- Leave Status -->
+                <div class="card">
+                    <h3>My Leave Applications</h3>
+                    <div id="leaveStatus" class="leave-status">
+                        <!-- Leave applications will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard -->
+        <section id="adminDashboard" class="dashboard" style="display: none;">
+            <div class="dashboard-header">
+                <h2>Admin Dashboard</h2>
+                <div class="notification-icon" onclick="showAdminNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span id="adminNotificationCount" class="notification-count">0</span>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- CSV Upload -->
+                <div class="card">
+                    <h3>Upload CSV Files</h3>
+                    <div class="upload-section">
+                        <div class="upload-group">
+                            <label for="usersCSV">Users CSV (Name, Unique_ID)</label>
+                            <input type="file" id="usersCSV" accept=".csv" onchange="uploadUsersCSV(event)">
+                            <button onclick="document.getElementById('usersCSV').click()" class="btn btn-secondary">
+                                <i class="fas fa-upload"></i> Upload Users CSV
+                            </button>
+                        </div>
+                        <div class="upload-group">
+                            <label for="locationsCSV">Locations CSV (Location_Name, Latitude, Longitude)</label>
+                            <input type="file" id="locationsCSV" accept=".csv" onchange="uploadLocationsCSV(event)">
+                            <button onclick="document.getElementById('locationsCSV').click()" class="btn btn-secondary">
+                                <i class="fas fa-upload"></i> Upload Locations CSV
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leave Management -->
+                <div class="card">
+                    <h3>Leave Applications</h3>
+                    <div id="adminLeaveList" class="leave-list">
+                        <!-- Leave applications will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notifications Modal -->
+        <div id="notificationsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Notifications</h3>
+                    <span class="close" onclick="closeModal('notificationsModal')">&times;</span>
+                </div>
+                <div id="notificationsList" class="notifications-list">
+                    <!-- Notifications will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Substitution Request Modal -->
+        <div id="substitutionModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Substitution Request</h3>
+                    <span class="close" onclick="closeModal('substitutionModal')">&times;</span>
+                </div>
+                <div id="substitutionDetails" class="substitution-details">
+                    <!-- Substitution details will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Messages -->
+        <div id="alertContainer" class="alert-container"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
